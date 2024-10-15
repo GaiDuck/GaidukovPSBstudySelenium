@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\alexg\\Source\\Repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj": {}
+    "C:\\Users\\alexg\\source\\repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj": {}
   },
   "projects": {
-    "C:\\Users\\alexg\\Source\\Repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj": {
+    "C:\\Users\\alexg\\source\\repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexg\\Source\\Repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj",
+        "projectUniqueName": "C:\\Users\\alexg\\source\\repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj",
         "projectName": "SeleniumInitialize_Builder",
-        "projectPath": "C:\\Users\\alexg\\Source\\Repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj",
+        "projectPath": "C:\\Users\\alexg\\source\\repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\SeleniumInitialize_Builder.csproj",
         "packagesPath": "C:\\Users\\alexg\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\alexg\\Source\\Repos\\1.-IWebDriverConfig\\SeleniumInitialize_Builder\\obj\\",
         "projectStyle": "PackageReference",

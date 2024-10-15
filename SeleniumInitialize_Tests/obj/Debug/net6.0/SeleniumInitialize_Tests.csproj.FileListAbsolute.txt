@@ -213,3 +213,4 @@ C:\Users\alexg\source\repos\1.-IWebDriverConfig\SeleniumInitialize_Tests\obj\Deb
 C:\Users\alexg\source\repos\1.-IWebDriverConfig\SeleniumInitialize_Tests\obj\Debug\net6.0\SeleniumInitialize_Tests.pdb
 C:\Users\alexg\source\repos\1.-IWebDriverConfig\SeleniumInitialize_Tests\obj\Debug\net6.0\SeleniumInitialize_Tests.genruntimeconfig.cache
 C:\Users\alexg\source\repos\1.-IWebDriverConfig\SeleniumInitialize_Tests\obj\Debug\net6.0\ref\SeleniumInitialize_Tests.dll
+C:\Users\alexg\source\repos\1.-IWebDriverConfig\SeleniumInitialize_Tests\bin\Debug\net6.0\SeleniumExtras.WaitHelpers.dll

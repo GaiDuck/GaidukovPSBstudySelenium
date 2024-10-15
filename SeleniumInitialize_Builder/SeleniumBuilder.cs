@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools.V119.DOMSnapshot;
+using OpenQA.Selenium.Support.UI;
 using System.Diagnostics;
 
 namespace SeleniumInitialize_Builder
@@ -14,7 +15,7 @@ namespace SeleniumInitialize_Builder
         public List<string> ChangedArguments { get; private set; }
         public Dictionary<string, object> ChangedUserOptions { get; private set; }
         public TimeSpan Timeout { get; private set; } = TimeSpan.Zero;
-        public string StartingURL { get; private set; }
+        public string StartingURL { get; private set; } = null;
         
         ChromeOptions _chromeOptions { get; set; }
         ChromeDriverService _chromeService { get; set; }
@@ -33,6 +34,11 @@ namespace SeleniumInitialize_Builder
             if (Timeout != TimeSpan.Zero)
             {
                 WebDriver.Manage().Timeouts().ImplicitWait = Timeout;
+            }
+
+            if (StartingURL != null)
+            {
+                WebDriver.Navigate().GoToUrl(StartingURL);
             }
 
             return WebDriver;
@@ -110,7 +116,8 @@ namespace SeleniumInitialize_Builder
             //Реализовать изменения изначального URL запускаемого браузера
             //Отслеживать изменения в строке StartingURL
             //Builder возвращает себя
-            throw new NotImplementedException();
+            StartingURL = url;
+            return this;
         }
     }
 }
