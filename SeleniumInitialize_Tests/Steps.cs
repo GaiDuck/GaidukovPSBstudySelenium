@@ -14,8 +14,6 @@ namespace SeleniumInitialize_Tests
 {
     public class Steps
     {
-
-
         public void ClickElement(IWebDriver driver, WebDriverWait wait, string xpath)
         {
             wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(xpath)));

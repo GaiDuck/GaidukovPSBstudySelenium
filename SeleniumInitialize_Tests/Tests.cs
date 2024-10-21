@@ -10,6 +10,7 @@ using SeleniumExtras.WaitHelpers;
 using System.Drawing;
 using OpenQA.Selenium.Interactions;
 using System.Text.RegularExpressions;
+using System;
 
 namespace SeleniumInitialize_Tests
 {
@@ -219,18 +220,27 @@ namespace SeleniumInitialize_Tests
         PageYourCashback _cashback;
         PageCashLoan _cashLoan;
 
+        ControlCheckBox _checkBox;
+
         TestUserModel _userProfile;
         Steps step;
 
-
+        TimeSpan timeout;
+        IWebDriver driver;
+        WebDriverWait wait;
 
         [SetUp]
         public void Setup()
         {
+            timeout = TimeSpan.FromSeconds(8);
+            driver = _builder.WithTimeout(timeout).Build();
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+
             step = new Steps();
             _builder = new SeleniumBuilder();
             _cashback = new PageYourCashback();
             _cashLoan = new PageCashLoan();
+            _checkBox = new ControlCheckBox(driver, wait, step);
             _builder.HeadLessMod = false;
 
             _userProfile = new TestUserModel();
@@ -248,17 +258,22 @@ namespace SeleniumInitialize_Tests
             _builder.Dispose();
         }
 
+
+        /// <summary>
+        /// Часть 1, задание 1
+        /// </summary>
         [Test(Description = "Проверка корректной инициализации экземпляра IWebDriver")]
         public void BuildTest1()
         {
-            IWebDriver driver = _builder.Build();
             Assert.IsNotNull(driver);
         }
 
+        /// <summary>
+        /// Часть 1, задание 2
+        /// </summary>
         [Test(Description = "Проверка очистки ресурсов IWebDriver")]
         public void DisposeTest1()
         {
-            IWebDriver driver = _builder.Build();
             Assert.IsFalse(_builder.IsDisposed);
             _builder.Dispose();
             Assert.IsTrue(_builder.IsDisposed);
@@ -266,40 +281,42 @@ namespace SeleniumInitialize_Tests
             Assert.IsFalse(processes.Any());
         }
 
-        [Test(Description = "Проверка изменения порта")]
-        public void ChangePortTest()
-        {
-            IWebDriver driver = _builder.ChangePort(123).Build();
-            Assert.That(_builder.Port, Is.EqualTo(123));
-        }
-
+        /// <summary>
+        /// Часть 1, задание 3
+        /// </summary>
         [Test(Description = "HeadLess режим")]
         public void SetHeadLessModTest()
         {
+            _builder.Dispose();
             IWebDriver driver = _builder.SetHeadLessMod().Build();
             Assert.That(_builder.HeadLessMod, Is.EqualTo(true));
         }
 
-
-
+        /// <summary>
+        /// Часть 1, задание 4
+        /// </summary>
         [Test(Description = "Проверка изменения таймаута")]
         public void TimeoutTest()
         {
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithTimeout(timeout).Build();
             Assert.That(driver.Manage().Timeouts().ImplicitWait, Is.EqualTo(timeout));
             Assert.That(_builder.Timeout, Is.EqualTo(timeout));
         }
 
+        /// <summary>
+        /// Часть 2, задание 1.1
+        /// </summary>
         [Test(Description = "Проверка перехода по стартовой ссылке")]
         public void SetStartingUrlTest()
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            IWebDriver driver = _builder.WithURL(url).Build();
+            driver.Navigate().GoToUrl(url);
             Assert.That(driver.Url, Is.EqualTo(url));
         }
 
-        
+        /// <summary>
+        /// Часть 2, задание 1.2
+        /// </summary>
+        /// <param name="xpath"></param>
         [Test(Description = "Проверка наличия элемента")]
         [TestCase(mortgageObject)]
         [TestCase(buttonGosuslugy)]
@@ -310,8 +327,7 @@ namespace SeleniumInitialize_Tests
         public void ElementIsFoundTest(string xpath)
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate ().GoToUrl(url);   
 
             try
             {
@@ -325,7 +341,11 @@ namespace SeleniumInitialize_Tests
                 Assert.Pass();
             }
         }
-        
+       
+        /// <summary>
+        /// Часть 2, задание 2.1
+        /// </summary>
+        /// <param name="xpath"></param>
         [Test(Description = "Проверка доступности элемента")]
         [TestCase(mortgageObject)]
         [TestCase(buttonGosuslugy)]
@@ -335,13 +355,16 @@ namespace SeleniumInitialize_Tests
         public void ElementIsActiveTest(string xpath)
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url); 
 
             var element = driver.FindElement(By.XPath(xpath));
             Assert.That(element.Enabled);
         }
-                
+        
+        /// <summary>
+        /// Часть 2, задание 2.2
+        /// </summary>
+        /// <param name="xpath"></param>
         [Test(Description = "Проверка видимости элемента")]
         [TestCase(mortgageObject)]
         [TestCase(buttonGosuslugy)]
@@ -351,46 +374,56 @@ namespace SeleniumInitialize_Tests
         public void ElementIsVisibleTest(string xpath)
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(xpath));
             Assert.That(element.Displayed);
         }
 
-        [Test(Description = "Проверка видимости элемента")]
+        /// <summary>
+        /// Часть 2, задание 2.3
+        /// </summary>
+        /// <param name="xpath"></param>
+        /// <param name="expectedValue"></param>
+        [Test(Description = "Проверка значения элемента")]
         [TestCase(mortgageObject, null)]
         [TestCase(crediteTerm, "30")]
         public void ElementValueTest(string xpath, string expectedValue)
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(xpath));
             Assert.That(element.GetDomProperty("value"), Is.EqualTo(expectedValue));
         }
 
-        [Test(Description = "Проверка видимости элемента")]
+        /// <summary>
+        /// Часть 2, задание 2.4
+        /// </summary>
+        /// <param name="xpath"></param>
+        [Test(Description = "Проверка состояния элемента")]
         [TestCase(familyMortgage)]
         [TestCase(lifeInsuranceSwitcherOn)]
         public void ElementConditionTest(string xpath)
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(xpath));
             Assert.That(element, Is.Not.Null);
         }
 
+        /// <summary>
+        /// Часть 3, задание 3
+        /// </summary>
+        /// <param name="xpath_1"></param>
+        /// <param name="xpath_2"></param>
         [Test(Description = "Ожидание элементов")]
         [TestCase(fillWithoutGosuslugyMilitary, warninTablet)]
         public void FillWithoutGosuslugyTest(string xpath_1, string xpath_2)
         {
             string url = @"https://ib.psbank.ru/store/products/military-family-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url); 
 
             var element = driver.FindElement(By.XPath(xpath_1));
             element.Click();
@@ -401,12 +434,12 @@ namespace SeleniumInitialize_Tests
             Assert.IsFalse(element.Displayed);
         }
 
+
         [Test(Description = "Взаимодействие с элементами")]
         public void InteractWithElements()
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
+            driver.Navigate().GoToUrl(url);
 
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
 
@@ -445,10 +478,7 @@ namespace SeleniumInitialize_Tests
         public void ActionsWithElements()
         {
             string url = @"https://ib.psbank.ru/store/products/classic-mortgage-program";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(buttonGosuslugy));
             Assert.That(element.Enabled);
@@ -468,9 +498,7 @@ namespace SeleniumInitialize_Tests
         public void PageLoadAwaite()
         {
             string url = @"https://ib.psbank.ru/";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(financialInstruments)));
             var element = driver.FindElement(By.XPath(financialInstruments));
@@ -481,9 +509,7 @@ namespace SeleniumInitialize_Tests
         public void TransitionByLink()
         {
             string url = @"https://ib.psbank.ru/";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(financialInstruments)));
 
@@ -503,10 +529,7 @@ namespace SeleniumInitialize_Tests
             string url1 = @"https://ib.psbank.ru/store/products/consumer-loan";
             string url2 = @"https://ib.psbank.ru/store/products/investmentsbrokerage";
 
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-
-            IWebDriver driver = _builder.WithURL(url1).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url1);
 
             var element = driver.FindElement(By.XPath(switchToGosuslugi));
             Assert.That(element.Enabled);
@@ -535,12 +558,7 @@ namespace SeleniumInitialize_Tests
         public void ChangeCategories() //тест не дописан, строки 404+ перенести в отдельный метод
         {
             string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
-
-
-
+            driver.Navigate().GoToUrl(url); 
             step.ClickElement(driver, wait, changeCategories);
 
             try
@@ -567,9 +585,7 @@ namespace SeleniumInitialize_Tests
         public void ChooseLastName()
         {
             string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             string lastName = "Пу";
             step.FillElement(driver, wait, lastNameFormCashback, lastName);
@@ -581,9 +597,7 @@ namespace SeleniumInitialize_Tests
         public void DownloadFile()
         {
             string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             step.ClickElement(driver, wait, downloadFile);
             IList<string> windowHandles = new List<string>(driver.WindowHandles);
@@ -598,9 +612,7 @@ namespace SeleniumInitialize_Tests
         public void FormFillTest()
         {
             string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(_cashback.buttonNextXpath));  
             Assert.False(element.Enabled);
@@ -611,7 +623,7 @@ namespace SeleniumInitialize_Tests
             }
             finally { /* I HATE COOKIES */ }
 
-            _cashback.FillDebitCardApplication(driver, wait, this.step, this._userProfile);
+            _cashback.FillDebitCardApplication(driver, wait, step, _userProfile);
 
             Assert.True(element.Enabled);
         }
@@ -620,9 +632,7 @@ namespace SeleniumInitialize_Tests
         public void EnteredDataTest()
         {
             string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+            driver.Navigate().GoToUrl(url);
 
             var element = driver.FindElement(By.XPath(_cashback.buttonNextXpath));
 
@@ -652,9 +662,8 @@ namespace SeleniumInitialize_Tests
         public void PageInheritanceTest()
         {
             string url = @"https://ib.psbank.ru/store/products/consumer-loan";
-            TimeSpan timeout = TimeSpan.FromSeconds(8);
-            IWebDriver driver = _builder.WithURL(url).WithTimeout(timeout).Build();
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(8));
+
+            driver.Navigate().GoToUrl(url);
 
             try
             {
@@ -663,7 +672,33 @@ namespace SeleniumInitialize_Tests
             finally { /* I HATE COOKIES */ }
 
             _cashLoan.FillDebitCardApplication(driver, wait, this.step, this._userProfile);
-            Thread.Sleep(10000);
+        }
+
+        
+        [Test(Description = "Проверка смены категорий v2")]
+        public void CategorySwitchTest()
+        {
+            string url = @"https://ib.psbank.ru/store/products/your-cashback-new";
+            driver.Navigate().GoToUrl(url);
+
+            try
+            {
+                step.ClickElement(driver, wait, acceptCookies);
+            }
+            finally { /* I HATE COOKIES */ }
+
+            step.ClickElement(driver, wait, changeCategories);
+
+            _checkBox.Switch(_checkBox.restaurants, driver, wait);
+            _checkBox.Switch(_checkBox.taxi, driver, wait);
+            _checkBox.Switch(_checkBox.entertainments, driver, wait);
+            _checkBox.Switch(_checkBox.transport, driver, wait);
+            _checkBox.Switch(_checkBox.petProducts, driver, wait);
+            _checkBox.Switch(_checkBox.railwayTickets, driver, wait);
+
+            var element = driver.FindElement(By.XPath(confirmButton));
+            Assert.That(element.Enabled);
         }
     }
 }
+

@@ -69,12 +69,12 @@ namespace SeleniumInitialize_Tests
         /// <summary>
         /// Метод возвращает XPath, указывающий на поданный в метод текст 
         /// </summary>
-        public string FindStringAtPage(string text)
+        public virtual string FindStringAtPage(string text)
         {
             return $@"//b[contains(text(),'{text}')]";
         }
 
-        public void FillDebitCardApplication(IWebDriver driver, WebDriverWait wait, Steps step, TestUserModel _userProfile)
+        public virtual void FillDebitCardApplication(IWebDriver driver, WebDriverWait wait, Steps step, TestUserModel _userProfile)
         {
             step.FillElement(driver, wait, lastNameXpath, _userProfile.LastName);
             step.FillElement(driver, wait, firstNameXpath, _userProfile.FirstName);
