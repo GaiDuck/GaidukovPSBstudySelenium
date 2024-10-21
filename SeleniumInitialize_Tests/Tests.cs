@@ -214,7 +214,7 @@ namespace SeleniumInitialize_Tests
 
         public string ScreenshotDerictoryPath = @"C:\Users\alexg\OneDrive\Рабочий стол\Работа\ПСБ\PSBstudy\PSBstudy\C#\Selenium\Screenshots\";
         public string licenceMask = "Генеральная лицензия на осуществление банковских операций";
-
+        //все селекторы нужно вынести в какие-то пейджи или в отдельный технический класс с типами By (назови его Locators или что-то такое, если на что-то можешь придумать пейдж, то пейдж)
         private SeleniumBuilder _builder;
         
         PageYourCashback _cashback;
@@ -574,6 +574,7 @@ namespace SeleniumInitialize_Tests
 
             for (int i = 4; i < 9; i=i+2)
             {
+                //нужен пример 
                 step.ClickElement(driver, wait, step.CheckBoxUniversalXPath(i));
             }
 

@@ -9,7 +9,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SeleniumInitialize_Tests
 {
-    internal class PageYourCashback
+    internal class PageYourCashback //прокинуть WebDriver и WebDriverWait и Steps в этот класс, использовать его внутри, а не снаружи каждый раз брать.
+                                    //В теории, можно и так оставить, это просто ближе к другому варианту паттерна
     {
         /// <summary>
         /// Фамилия
@@ -73,7 +74,7 @@ namespace SeleniumInitialize_Tests
         {
             return $@"//b[contains(text(),'{text}')]";
         }
-
+        //нужна перегрузка без driver, wait, step, а с теми, что внутри класса (я показывал, попытайся вспомнить или логически сам придумать)
         public virtual void FillDebitCardApplication(IWebDriver driver, WebDriverWait wait, Steps step, TestUserModel _userProfile)
         {
             step.FillElement(driver, wait, lastNameXpath, _userProfile.LastName);
